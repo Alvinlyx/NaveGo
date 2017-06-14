@@ -27,10 +27,8 @@ function [ref_ds] = downsampling (ref, dt_b)
 dt_r = mean(diff(ref.t));
 
 if (dt_b >= dt_r)
-
     dspl = floor(dt_b / dt_r);
 else
-    
     error('downsampling: dt_r > dt_b')    
 end
 

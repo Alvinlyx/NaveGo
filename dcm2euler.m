@@ -45,5 +45,4 @@ theta = asin(-DCMbn(3,1) );
 psi   = atan2( DCMbn(2,1), DCMbn(1,1) ); 
 
 euler = [phi theta psi];
-
 end

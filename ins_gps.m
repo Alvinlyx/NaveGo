@@ -115,12 +115,12 @@ if strcmp(precision, 'single')  % single precision
     Z = single(zeros(3));
     
     % Kalman matrices for later analysis
-    In = single(zeros(Mg, 6));       % Kalman filter innovations
-    Pi = single(zeros(Mg, 441));     % Elements from a priori covariance matrix, Pi
-    Pp = single(zeros(Mg, 441));     % Elements from a posteriori covariance matrix, Pp
-    A  = single(zeros(Mg, 441));     % Elements from transition-state matrix, A
+    In = single(zeros(Mg, 6));        % Kalman filter innovations
+    Pi = single(zeros(Mg, 441));    % Elements from a priori covariance matrix, Pi
+    Pp = single(zeros(Mg, 441));   % Elements from a posteriori covariance matrix, Pp
+    A  = single(zeros(Mg, 441));    % Elements from transition-state matrix, A
     Xi = single(zeros(Mg, 21));      % Evolution of Kalman filter a priori states, xi
-    Xp = single(zeros(Mg, 21));      % Evolution of Kalman filter a posteriori states, xp
+    Xp = single(zeros(Mg, 21));     % Evolution of Kalman filter a posteriori states, xp
     B  = single(zeros(Mg, 12));      % Biases compensantions after Kalman filter correction
     x  = single([ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]');  % Kalman filter error vector state
         
@@ -132,11 +132,11 @@ if strcmp(precision, 'single')  % single precision
 
     
     % Initialize estimates at tti=1
-    roll_e (1) = single(imu.ini_align(1));
+    roll_e (1)   = single(imu.ini_align(1));
     pitch_e(1) = single(imu.ini_align(2));
-    yaw_e(1)   = single(imu.ini_align(3));
-    vel_e(1,:) = single(gps.vel(1,:));    
-    h_e(1)     = single(gps.h(1));
+    yaw_e(1)  = single(imu.ini_align(3));
+    vel_e(1,:)  = single(gps.vel(1,:));    
+    h_e(1)       = single(gps.h(1));
     
 else % double precision
     
@@ -155,13 +155,13 @@ else % double precision
     Z = zeros(3);
     
     % Kalman matrices for later analysis
-    In = zeros(Mg, 6);         % Kalman filter innovations
+    In = zeros(Mg, 6);           % Kalman filter innovations
     Pi = zeros(Mg, 441);       % Elements from a priori covariance matrices, Pi
-    Pp = zeros(Mg, 441);       % Elements from a posteriori covariance matrices, Pp
+    Pp = zeros(Mg, 441);      % Elements from a posteriori covariance matrices, Pp
     A  = zeros(Mg, 441);       % Elements from transition-state matrices, A
-    Xi = zeros(Mg, 21);        % Evolution of Kalman filter a priori states, xi
+    Xi = zeros(Mg, 21);         % Evolution of Kalman filter a priori states, xi
     Xp = zeros(Mg, 21);        % Evolution of Kalman filter a posteriori states, xp
-    B  = zeros(Mg, 12);        % Biases compensantions after Kalman filter correction
+    B  = zeros(Mg, 12);         % Biases compensantions after Kalman filter correction
     x  = [ zeros(1,9), imu.gb_fix, imu.ab_fix, imu.gb_drift, imu.ab_drift ]';  % Kalman filter error vector state
         
     % Initialize biases variables
@@ -224,7 +224,6 @@ for j = 2:Mg
         % Correct inertial sensors
         wb_corrected = (imu.wb(i,:)' + gb_fix + gb_drift );
         fb_corrected = (imu.fb(i,:)' + ab_fix + ab_drift );
-        
         % Attitude update
         omega_ie_N = earthrate(lat_e(i-1), precision);
         omega_en_N = transportrate(lat_e(i-1), vel_e(i-1,1), vel_e(i-1,2), h_e(i-1));

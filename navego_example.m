@@ -51,7 +51,6 @@ clear
 matlabrc
 
 versionstr = 'NaveGo, release v0.8.0-alpha';
-
 fprintf('\n%s.\n', versionstr)
 fprintf('\nNaveGo: starting simulation ... \n')
 
@@ -60,12 +59,11 @@ fprintf('\nNaveGo: starting simulation ... \n')
 % Comment any of the following parameters in order to NOT execute a particular portion of code
 
 GPS_DATA  = 'ON';   % Simulate GPS data
-IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
+%IMU1_DATA = 'ON';   % Simulate ADIS16405 IMU data
 IMU2_DATA = 'ON';   % Simulate ADIS16488 IMU data
 
-IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
+%IMU1_INS  = 'ON';   % Execute INS/GPS integration for ADIS16405 IMU
 IMU2_INS  = 'ON';   % Execute INS/GPS integration for ADIS16488 IMU
-
 PLOT      = 'ON';   % Plot results.
 
 % If a particular parameter is commented above, it is set by default to 'OFF'.
@@ -73,13 +71,14 @@ PLOT      = 'ON';   % Plot results.
 if (~exist('GPS_DATA','var')),  GPS_DATA  = 'OFF'; end
 if (~exist('IMU1_DATA','var')), IMU1_DATA = 'OFF'; end
 if (~exist('IMU2_DATA','var')), IMU2_DATA = 'OFF'; end
-if (~exist('IMU1_INS','var')),  IMU1_INS = 'OFF'; end
-if (~exist('IMU2_INS','var')),  IMU2_INS = 'OFF'; end
-if (~exist('PLOT','var')),      PLOT     = 'OFF'; end
+if (~exist('IMU1_INS','var')),    IMU1_INS = 'OFF'; end
+if (~exist('IMU2_INS','var')),    IMU2_INS = 'OFF'; end
+if (~exist('PLOT','var')),          PLOT     = 'OFF'; end
 
 %% CONVERSION CONSTANTS
 
 G = 9.81;           % Gravity constant, m/s^2
+
 G2MSS = G;          % g to m/s^2
 MSS2G = (1/G);      % m/s^2 to g
 
@@ -275,12 +274,11 @@ if strcmp(IMU1_INS, 'ON')
     fprintf('NaveGo: INS/GPS integration for IMU1... \n')
     
     % Sincronize GPS data with IMU data.
-    
+ 
     % Guarantee that gps.t(1) < imu1.t(1) < gps.t(2)
     if (imu1.t(1) < gps.t(1)),
         
         igx  = find(imu1.t > gps.t(1), 1, 'first' );
-        
         imu1.t  = imu1.t  (igx:end, :);
         imu1.fb = imu1.fb (igx:end, :);
         imu1.wb = imu1.wb (igx:end, :);        
@@ -298,12 +296,10 @@ if strcmp(IMU1_INS, 'ON')
         gps1.h   = gps.h  (1:fgx, :);
         gps1.vel = gps.vel(1:fgx, :);
     end
-    
     % Execute INS/GPS integration
     % ---------------------------------------------------------------------
     [imu1_e] = ins_gps(imu1, gps1, 'quaternion', 'double');
     % ---------------------------------------------------------------------
-    
     save imu1_e.mat imu1_e
     
 else
@@ -348,7 +344,7 @@ if strcmp(IMU2_INS, 'ON')
     % ---------------------------------------------------------------------
     [imu2_e] = ins_gps(imu2, gps2, 'dcm', 'single');
     % ---------------------------------------------------------------------
-    
+    imu2_e2= ins_only(imu2, gps2,ref);
     save imu2_e.mat imu2_e
     
 else
@@ -392,13 +388,23 @@ if (strcmp(PLOT,'ON'))
     plot3(ref.lon.*R2D, ref.lat.*R2D, ref.h)
     hold on
     plot3(ref.lon(1).*R2D, ref.lat(1).*R2D, ref.h(1), 'or', 'MarkerSize', 10, 'LineWidth', 2)
+    hold on 
+    figure;
+    plot3(gps2.lon.*R2D, gps2.lat.*R2D, gps2.h)
+    hold on
+    figure
+    
+    [imu2_e2]= ins_only(imu1, gps2);
+    plot3(imu2_e2.lon.*R2D, imu2_e2.lat.*R2D, imu2_e2.h);
+    hold on 
+    figure 
+    plot3(imu2_e.lon.*R2D, imu2_e.lat.*R2D, imu2_e.h);
     axis tight
     title('TRAJECTORY')
     xlabel('Longitude [deg.]')
     ylabel('Latitude [deg.]')
     zlabel('Altitude [m]')
     grid
-    
     % ATTITUDE
     figure;
     subplot(311)
@@ -587,5 +593,4 @@ if (strcmp(PLOT,'ON'))
     ylabel('[m]')
     legend('GPS', 'IMU1', 'IMU2', '3\sigma');
     title('ALTITUDE ERROR');
-    
 end
