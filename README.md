@@ -1,5 +1,5 @@
-# NaveGo
 
+# NaveGo
 [![Releases](https://img.shields.io/badge/release-v0.8.0--alpha-green.svg?style=plastic)](https://github.com/rodralez/NaveGo/releases) [![DOI](https://zenodo.org/badge/12745155.svg)](https://zenodo.org/badge/latestdoi/12745155)
 
 NaveGo: an open-source MATLAB/GNU Octave toolbox for processing integrated navigation systems and performing inertial sensors profiling analysis.
